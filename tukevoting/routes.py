@@ -136,3 +136,9 @@ def account():
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file) 
     return render_template("account.html", title='Account', image_file=image_file, form=form)
+
+@app.route('/info/<string:first_name>')
+@login_required
+def candidate(first_name):
+    edit_candidate = Candidate.query.filter_by(first_name=first_name).first()
+    return render_template('candidate.html', title='Edit Candidate Information', candidate=edit_candidate)

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Edit Candidate Information</h1>
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#"></a>
+                <h2>
+                    <small class="text-muted"> {{candidate.first_name}} </small>
+                    <small class="text-muted"> {{candidate.last_name}} </small>
+                </h2>
+                <p class="text">School: {{candidate.school}} </p>
+                <p class="text">Position: {{candidate.position}} </p>
+                <h4>
+                    <p class="text">Manifesto </p> 
+                    <p class="text-muted"> {{candidate.description}} </p>
+                </h4>
+            </div>
+        </div>
+    </article>
+
+{% endblock content %}
