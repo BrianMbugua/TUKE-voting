@@ -20,17 +20,26 @@ class Voter(db.Model, UserMixin):
         return f"Voter('{self.first_name}', '{self.email}','{self.voter_id}' )"
 
 class Admin(db.Model, UserMixin):
+    
     admin_id = db.Column(db.String(20),unique=True, nullable=False, primary_key=True)
     admin_name = db.Column(db.String(20), nullable=False)
     admin_password = db.Column(db.String(60), nullable=False)
 
     def __repr__(self):
         return f"Admin('{self.admin_id}', '{self.admin_name}')"
+    def get_id(self):
+           return (self.admin_id)
 
 class Candidate(db.Model):
     candidate_id = db.Column(db.String(20),unique=True, nullable=False, primary_key=True)
     first_name = db.Column(db.String(20), nullable=False)
-    second_name = db.Column(db.String(20), nullable=False)
+    last_name = db.Column(db.String(20), nullable=False)
     description = db.Column(db.String(300), nullable=False)
     position = db.Column(db.String(40), nullable=False)
-    photo = db.Column(db.String(60), nullable=False, default='default.jpg')
+    image_file = db.Column(db.String(60), nullable=True, default='default.jpg')
+    school = db.Column(db.String(6), nullable=False)
+
+    def __repr__(self):
+        return f"Candidate('{self.first_name}', '{self.position}','{self.candidate_id}' )"
+
+

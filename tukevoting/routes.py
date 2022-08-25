@@ -4,8 +4,10 @@ from PIL import Image
 from flask import render_template,url_for, flash, redirect, request
 from tukevoting import app, db, bcrypt
 from tukevoting.models import Voter, Admin, Candidate
-from tukevoting.forms import AdminForm, RegistrationForm, LoginForm, CandidateForm, UpdateAccountForm
+from tukevoting.forms import AdminForm, RegistrationForm, LoginForm, CandidateForm, SchoolForm, UpdateAccountForm
 from flask_login import login_user, login_required, current_user, logout_user
+
+
 
 @app.route("/")
 @app.route("/home")
@@ -40,30 +42,55 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            flash('Log in Successful!', 'success')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            if current_user.voter_id == 'admin001':
+                flash('Logged in as Administrator', 'success')
+                #return render_template('home.html')
+                return redirect(url_for('admin'))
+            else:
+                flash('Log in Successful!', 'success')
+                return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
-            flash('Log in unsuccessful. Check voter_id or paswword', 'danger')
+            flash('Log in unsuccessful. Check Voter ID or password', 'danger')
             return render_template('login.html', title='Login', form=form)
+    return render_template('login.html', title='Login', form=form)
      
-    return render_template('login.html', title='Login', form=form)    
-
+  
 
 @app.route("/admin", methods=['GET', 'POST'])
+@login_required
 def admin():
-    form = AdminForm()
-    if form.validate_on_submit():
-        if form.admin_id.data == 'scci' and form.password.data == 'free':
-            flash('You have logged in as Admin!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Log in unsuccessful. Check username or paswword', 'danger')
-    return render_template('admin.html', title='Admin', form=form)
+    form = CandidateForm()
+    admin_id = current_user.voter_id
+    if admin_id == 'admin001':
+        if form.is_submitted():
+            #if form.photo.data:
+            #    picture_file = save_picture2(form.photo.data)
+            #    current_user.image_file = picture_file
+            candidate = Candidate(candidate_id=form.candidate_id.data, first_name=form.first_name.data, last_name=form.last_name.data, school=form.school.data, description=form.description.data, position=form.position.data)
+            db.session.add(candidate)
+            db.session.commit()
+            flash('Candidate Registered Successfully','success')
+       
+        return render_template('admin.html', form=form)
+    else:
+        flash("You must be the Admin to access this page", 'danger')
+        return render_template('home.html', title='Dashboard')
 
-@app.route("/info")
+
+
+
+@app.route("/vote")
+@login_required
+def vote():
+    form = SchoolForm()
+    form.school.choices = [(Candidate.candidate_id, Candidate.position) for school in School.query.filter_by(school='SCIT').all()]
+    return render_template("vote.html", title='Vote')
+
+@app.route("/info", methods=['GET', 'POST'])
 @login_required
 def info():
-    return render_template("info.html", title='Info')
+    candidate = Candidate.query.all()
+    return render_template("info.html", title='Info', candidate=candidate)
 
 @app.route("/counter")
 @login_required

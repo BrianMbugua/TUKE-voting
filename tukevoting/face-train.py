@@ -30,6 +30,8 @@ for root, dirs, files in os.walk(image_dir):
             #y_labels.append(label) # some number
             #x_train.append(path) # verify this image, turn into  NUMPY array, GRAY
             pil_image = Image.open(path).convert("L")
+            #size = (1000, 1000)
+            #final_image = pil_image.resize(size, Image.ANTIALIAS)
             image_array = np.array(pil_image, "uint8")
            
             faces = face_cascade.detectMultiScale(image_array, scaleFactor=1.5)
@@ -37,7 +39,7 @@ for root, dirs, files in os.walk(image_dir):
             for (x,y,w,h) in faces:
                 roi = image_array[y:y+h, x:x+w]
                 x_train.append(roi)
-                y_labels.append(id_)
+                y_labels.append(id)
 
 #print(y_labels)
 #print(x_train)
