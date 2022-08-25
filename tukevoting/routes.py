@@ -63,15 +63,15 @@ def admin():
     admin_id = current_user.voter_id
     if admin_id == 'admin001':
         if form.is_submitted():
-            #if form.photo.data:
-            #    picture_file = save_picture2(form.photo.data)
-            #    current_user.image_file = picture_file
+            if form.photo.data:
+                picture_file = save_picture(form.photo.data)
+                current_user.image_file = picture_file
             candidate = Candidate(candidate_id=form.candidate_id.data, first_name=form.first_name.data, last_name=form.last_name.data, school=form.school.data, description=form.description.data, position=form.position.data)
             db.session.add(candidate)
             db.session.commit()
             flash('Candidate Registered Successfully','success')
-       
-        return render_template('admin.html', form=form)
+        image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+        return render_template('admin.html', form=form, imae_fiel=image_file)
     else:
         flash("You must be the Admin to access this page", 'danger')
         return render_template('home.html', title='Dashboard')
