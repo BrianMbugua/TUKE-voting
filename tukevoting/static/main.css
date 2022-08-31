@@ -10,3 +10,7 @@ body {
     border-radius: 3px;
     margin-bottom: 20px;
   }
+
+img {
+  max-width: 100px;
+}

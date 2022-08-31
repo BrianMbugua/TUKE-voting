@@ -1,16 +1,21 @@
-from logging.config import valid_ident
+
+from tokenize import String
+from turtle import position
 from wsgiref.validate import validator
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError    
-from tukevoting.models import Voter, Admin, Candidate
+from wtforms_sqlalchemy.fields import QuerySelectField
+from tukevoting.models import Voter, Admin, CandidateModel
+
 
 class RegistrationForm(FlaskForm):
     voter_id = StringField('Voter ID', validators=[DataRequired(), Length(min=2, max=20)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=15)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
+    school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
@@ -56,6 +61,7 @@ class CandidateForm(FlaskForm):
 class UpdateAccountForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=15)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
+    school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
@@ -77,8 +83,17 @@ class UpdateAccountForm(FlaskForm):
             user = Voter.query.filter_by(voter_id=last_name.data).first()
             if user:
                 raise ValidationError('Voter ID is already linked to another account')
+  
+def delegate_candidate_query():
+    return CandidateModel.query.filter_by(position='Delegate', school=current_user.school)
 
-class SchoolForm(FlaskForm):
-    school = SelectField('School', choices=[('SCIT', 'School of Information Technology'), ('SEEE', 'School of Electrical and Electronic Engineering'), ('SCAM', 'School of Creative Arts and Media')])
-    delegate = SelectField('Delegate', choices=[])
-    school_rep = SelectField('School Representative', choices=[])
+def school_rep_candidate_query():
+    return CandidateModel.query.filter_by(position='School Rep', school=current_user.school)
+
+class VoteForm(FlaskForm):
+    #delegate = SelectField(u'Delegate', choices=[('SCIT', 'Will Bill'), ('SEEE', 'Susan Nduku')])
+    #school = SelectField('School', choices=[('SCIT', 'Computing'), ('SEEE', 'Electrical'), ('SCAM', 'Creative Arts')])
+    delegate = QuerySelectField(query_factory=delegate_candidate_query, allow_blank=False, get_label=lambda s: '%s %s' % (s.first_name, s.last_name))
+    school_rep = QuerySelectField(query_factory=school_rep_candidate_query, allow_blank=False, get_label=lambda s: '%s %s' % (s.first_name, s.last_name))
+    submit = SubmitField('Submit')
+
