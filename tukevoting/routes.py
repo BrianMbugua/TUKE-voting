@@ -1,31 +1,37 @@
+from datetime import datetime
+from re import S
 import secrets
 import os
+import json
 from PIL import Image
-from flask import render_template,url_for, flash, redirect, request, abort
+from flask import render_template,url_for, flash, redirect, request, abort, make_response, jsonify
 from tukevoting import app, db, bcrypt
-from tukevoting.models import Voter, Admin, CandidateModel, Votes
+from tukevoting.models import Voter, CandidateModel, VoterFaces, Votes
 from tukevoting.forms import AdminForm, RegistrationForm, LoginForm, CandidateForm, VoteForm, UpdateAccountForm
 from flask_login import login_user, login_required, current_user, logout_user
+from tukevoting.face_rec  import run_face_rec
 
-
-
+#Define the home page route url 
 @app.route("/")
 @app.route("/home")
+#A flask-login function that restricts access to a page if the voter has not logged in
+@login_required
 def home():
+    
     return render_template("home.html", title='Home')
 
-@app.route("/about")
-def about():
-    return render_template("about.html", title='About')
-
+#Defines the register voter url 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    #redirects user to home route if theyve logged in already
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+    #Defines the form to be rendered on this page
     form = RegistrationForm()
     if form.validate_on_submit():
+        #hashes the passwords to ensure even one viewing the database cannot see the actual password value
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = Voter(voter_id=form.voter_id.data, first_name=form.first_name.data, last_name=form.last_name.data, school=form.school.data, email=form.email.data, password=hashed_password)
+        user = Voter(voter_id=form.voter_id.data,roll_num=form.roll_num.data, first_name=form.first_name.data, last_name=form.last_name.data, school=form.school.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your Account has been created! You can now login','success')
@@ -44,7 +50,6 @@ def login():
             next_page = request.args.get('next')
             if current_user.voter_id == 'admin001':
                 flash('Logged in as Administrator', 'success')
-                #return render_template('home.html')
                 return redirect(url_for('admin'))
             else:
                 flash('Log in Successful!', 'success')
@@ -66,12 +71,12 @@ def admin():
             if form.photo.data:
                 picture_file = save_picture(form.photo.data)
                 current_user.image_file = picture_file
-            reg_candidate = CandidateModel(candidate_id=form.candidate_id.data, first_name=form.first_name.data, last_name=form.last_name.data, school=form.school.data, description=form.description.data, position=form.position.data)
+            reg_candidate = CandidateModel(candidate_id=form.candidate_id.data,roll_num=form.roll_num.data, first_name=form.first_name.data, last_name=form.last_name.data, school=form.school.data, description=form.description.data, position=form.position.data)
             db.session.add(reg_candidate)
             db.session.commit()
             flash('Candidate Registered Successfully','success')
         image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-        return render_template('admin.html', form=form, imae_fiel=image_file, legend='Register Candidate')
+        return render_template('admin.html', form=form, image_file=image_file, legend='Register Candidate')
     else:
         flash("You must be the Admin to access this page", 'danger')
         return render_template('home.html', title='Dashboard')
@@ -82,12 +87,112 @@ def admin():
 @app.route("/vote/", methods=['GET', 'POST'])
 @login_required
 def vote():
-    form = VoteForm()
-    #if form.validate_on_submit():
-        #vote = Votes(voter_id=form)    
 
-    return render_template('vote.html', form=form)
-  
+    
+    v = current_user.roll_num
+    x = VoterFaces.query.filter(VoterFaces.roll_num == v).first()
+    if x:
+        flash("Face Verified", "info") 
+        form = VoteForm()
+        flash('We suggest you visit the Candidate Information page, to learn about your aspirants before you proceed to vote. Thankyou.', 'info')
+        if current_user.voted == False:
+            flash('You Have Not Voted','danger')
+            if form.is_submitted():
+                my_vote = Votes(id=current_user.id, roll_num=current_user.roll_num, voter_id=current_user.voter_id, post_1=form.delegate.data, post_2=form.school_rep.data)
+                has_voted = current_user.voted=True
+                db.session.add(my_vote, has_voted)
+                db.session.commit()
+                flash('Vote Cast Successfully!', 'success')
+                return render_template("vote.html", form=form)
+        else:
+            flash('You Have Already Voted','success')
+            return render_template('vote.html')
+        return render_template('vote.html', form=form)
+    else:
+        flash("Face Not Verified", "danger")
+        return render_template('home.html')
+        
+@app.route("/counter", methods=['GET','POST'])
+@login_required
+def counter():
+    delegate = CandidateModel.query.filter_by(position="Delegate").all()
+
+    school_rep = CandidateModel.query.filter_by(position="School Rep").all()
+    labels=[]
+    school_label=[]
+    data=[]
+    labels1=[]
+    data1=[]    
+
+    for candidate in delegate:
+        name = candidate.first_name+" "+candidate.last_name
+        school = candidate.school
+        labels.append(name)
+        school_label.append(school)
+        vote = Votes.query.filter(Votes.post_1==name).count()
+        data.append(vote)
+    
+
+    for candidate in school_rep:
+        name = candidate.first_name+" "+candidate.last_name
+        labels1.append(name)
+        vote = Votes.query.filter(Votes.post_2==name).count()
+        data1.append(vote)    
+    
+
+    output = {"data": data,
+            "labels": labels,
+            "data1": data1,
+            "labels1": labels1}
+    response = app.response_class(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )
+
+    return render_template('counter.html',labels=labels,data=data,labels1=labels1,data1=data1)
+
+
+@app.route("/counter/live", methods=['GET','POST'])
+@login_required
+def counter_live():
+    delegate = CandidateModel.query.filter_by(position="Delegate").all()
+
+    school_rep = CandidateModel.query.filter_by(position="School Rep").all()
+    labels=[]
+    school_label=[]
+    data=[]
+    labels1=[]
+    data1=[]    
+
+    for candidate in delegate:
+        name = candidate.first_name+" "+candidate.last_name
+        school = candidate.school
+        labels.append(name)
+        school_label.append(school)
+        vote = Votes.query.filter(Votes.post_1==name).count()
+        data.append(vote)
+    
+
+    for candidate in school_rep:
+        name = candidate.first_name+" "+candidate.last_name
+        labels1.append(name)
+        vote = Votes.query.filter(Votes.post_2==name).count()
+        data1.append(vote)    
+    
+
+    output = {"data": data,
+            "labels": labels,
+            "data1": data1,
+            "labels1": labels1}
+    response = app.response_class(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )
+
+    return response
+
 
 @app.route("/info", methods=['GET', 'POST'])
 @login_required
@@ -95,10 +200,8 @@ def info():
     display_candidate = CandidateModel.query.all()
     return render_template("info.html", title='Info', candidate=display_candidate)
 
-@app.route("/counter")
-@login_required
-def counter():
-    return render_template("counter.html", title='Counter')
+
+
 
 @app.route("/logout")
 def logout():
@@ -126,13 +229,13 @@ def account():
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
+            current_user.image_file = picture_file  
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.school = form.school.data
         current_user.email = form.email.data
         db.session.commit()
-        flash('Your account has been updated!', 'success')
+        flash('Your account  has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
@@ -201,3 +304,20 @@ def delete_candidate(first_name):
     db.session.commit()
     flash('Candidate Successfully Deleted', 'success')
     return redirect(url_for('home'))
+
+@app.route("/faces")
+@login_required
+def faces():
+    if current_user.voted == True:
+        flash('Identity Already Verified','info')
+        return redirect(url_for('vote'))
+    else:
+        run_face_rec()
+        flash('Identity Verified', 'info')
+        return redirect(url_for('vote'))
+    
+@app.route("/transactions")
+@login_required
+def transactions():
+    show_dates = Votes.query.all()
+    return render_template("transactions.html", date=show_dates)

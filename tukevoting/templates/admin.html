@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<div class="container text-center">
+    <h3>Register Candidate</h3>
+</div>
 <div class="container content-section">
-
-    <div>
-        
-    </div>
-
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="'form-group">
-            <legend class="border-bottom mb-4"> {{ legend }} </legend>
+            <legend class="border-bottom mb-4">Input candidate details</legend>
             <div class="form-group">
                 {{ form.candidate_id.label(class="form-control-label") }}
 
@@ -26,7 +25,10 @@
                     {% endif %}    
 
             </div>
-
+            <div class="form-group">
+                {{ form.roll_num.label(class="form-control-label") }}
+                    {{ form.roll_num(class="form-control form-control-lg") }}
+            </div>
             <div class="form-group">
                 {{ form.first_name.label(class="form-control-label") }}
                     {{ form.first_name(class="form-control form-control-lg") }}

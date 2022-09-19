@@ -1,18 +1,15 @@
-
-from tokenize import String
-from turtle import position
-from wsgiref.validate import validator
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError    
-from wtforms_sqlalchemy.fields import QuerySelectField
+
 from tukevoting.models import Voter, Admin, CandidateModel
 
 
 class RegistrationForm(FlaskForm):
     voter_id = StringField('Voter ID', validators=[DataRequired(), Length(min=2, max=20)])
+    roll_num = StringField('Roll Number', validators=[DataRequired(), Length(min=4, max=6)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=15)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
@@ -49,6 +46,7 @@ class AdminForm(FlaskForm):
 
 class CandidateForm(FlaskForm):
     candidate_id = StringField('Candidate ID', validators=[DataRequired(), Length(min=12, max=20)])
+    roll_num = StringField('Roll Number', validators=[DataRequired(), Length(min=4, max=6)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=4, max=15)])
     last_name = StringField('Second Name', validators=[DataRequired(), Length(min=4, max=15)])
     description = TextAreaField('Manifesto', validators=[DataRequired()])
@@ -59,6 +57,7 @@ class CandidateForm(FlaskForm):
 
 
 class UpdateAccountForm(FlaskForm):
+    roll_num = StringField('Roll Number', validators=[DataRequired(), Length(min=4, max=6)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=15)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
@@ -83,17 +82,17 @@ class UpdateAccountForm(FlaskForm):
             user = Voter.query.filter_by(voter_id=last_name.data).first()
             if user:
                 raise ValidationError('Voter ID is already linked to another account')
-  
-def delegate_candidate_query():
+
+
+def delegate_cand():
     return CandidateModel.query.filter_by(position='Delegate', school=current_user.school)
 
-def school_rep_candidate_query():
+def school_rep_cand():
     return CandidateModel.query.filter_by(position='School Rep', school=current_user.school)
 
+
 class VoteForm(FlaskForm):
-    #delegate = SelectField(u'Delegate', choices=[('SCIT', 'Will Bill'), ('SEEE', 'Susan Nduku')])
-    #school = SelectField('School', choices=[('SCIT', 'Computing'), ('SEEE', 'Electrical'), ('SCAM', 'Creative Arts')])
-    delegate = QuerySelectField(query_factory=delegate_candidate_query, allow_blank=False, get_label=lambda s: '%s %s' % (s.first_name, s.last_name))
-    school_rep = QuerySelectField(query_factory=school_rep_candidate_query, allow_blank=False, get_label=lambda s: '%s %s' % (s.first_name, s.last_name))
+    delegate = SelectField('Delegate', choices=delegate_cand)
+    school_rep = SelectField('School Rep', choices=school_rep_cand)
     submit = SubmitField('Submit')
 

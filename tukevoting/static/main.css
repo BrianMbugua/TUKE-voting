@@ -1,5 +1,5 @@
 body {
-    background: #fafafa;
+    background: #d8d8d8;
     color: #333333;
   }
 
@@ -9,8 +9,26 @@ body {
     border: 1px solid #dddddd;
     border-radius: 3px;
     margin-bottom: 20px;
+    align-items: center;
   }
 
 img {
-  max-width: 100px;
+  max-width: 400px;
+}
+
+.navbar-custom {
+  background-color: rgb(80, 180, 163);
+}
+
+a{
+  color: rgb(80, 180, 163);
+}
+a.identity{
+  color: rgb(111, 196, 182);
+  background-color: rgb(28, 53, 49);
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 15rem;
 }

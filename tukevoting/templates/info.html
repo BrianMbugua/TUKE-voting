@@ -1,26 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Candidate Information</h1>
-    {% for candidate in candidate %}
-        <article class="media content-section">
-            <img class="rounded-circle article-img" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
-             <div class="media-body">
-                <div class="article-metadata">
-                    <h2>
-                        <a href=" {{ url_for('candidate', first_name=candidate.first_name)}} " class="article-title">
-                            <small class="text-muted"> {{candidate.first_name}} </small>
-                            <small class="text-muted"> {{candidate.last_name}} </small>
-                        </a>
-                    </h2>
-                    <p class="text">School: {{candidate.school}} </p>
-                    <p class="text">Position: {{candidate.position}} </p>
-                    <h4>
-                        <p class="text">Manifesto </p> 
-                        <p class="text-muted"> {{candidate.description}} </p>
-                    </h4>
+<div class="container text-center">
+    <h3>Candidate Information</h3>
+</div>
+<div class="container text-center mt-1">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for candidate in candidate %}
+            <div class="col">
+                <div class="card">
+                    
+                    <img class="card-img-top center" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
+                    <div class="card-body">                
+                        <h3 class="card-title mb-2">
+                            <a href=" {{ url_for('candidate', first_name=candidate.first_name)}} " class="card-link">
+                                <p class="card-text"> {{candidate.first_name}} {{candidate.last_name}}</p>
+                            </a>
+                        </h3>
+                        <p class="card-title">School: {{candidate.school}} </p>
+                        <p class="card-title">Position: {{candidate.position}} </p>
+                        <h5>
+                            <p class="card-subtitle text-muted">Manifesto </p> 
+                            <p class="text"> {{candidate.description}} </p>
+                        </h5>
+                    </div>
                 </div>
-            </div>
-        </article>
-    {% endfor %}
+            </div>    
+        {% endfor %}
+    </div>
+</div>    
+ 
 {% endblock content %}
