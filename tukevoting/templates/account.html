@@ -11,9 +11,8 @@
         <div class="col-md-6">
             <div class="card border-dark mb-3 sp_colour h-100">
                 <div class="row">
-                    
-                        <img alt="Profile Picture" class="rounded-circle card-img-top ms-5 mt-5 me-5 mb-1" src="{{ image_file }}">
-                    
+                    <img alt="Profile Picture" class="rounded-circle card-img-top ms-5 mt-5 me-5 mb-1" src="{{ image_file }}">
+                    <img src="{{ file_url }}">
                     
                         <div class="card-body">
                             <div class="media-body mt-5 ms-5">
@@ -61,11 +60,11 @@
                             
                             </div>
                             <div class="form-group">
-                                {{ form.picture.label() }}
-                                {{ form.picture(class="form-control-file") }}
+                                {{ form.picture.label() }}<br>
+                                {{ form.picture(class="form-control-file pt-1 pb-1") }}
                                 {% if form.picture.errors %}
-                                    {% for error in form.picture.errors %}
-                                        <span class="text-danger">{{ error }}</span><br>
+                                    {% for error in form.picture.errors %}<br>
+                                        <span class="text-danger">{{ error }}</span>
                                     {% endfor %}
                                 {% endif %}
                             </div>

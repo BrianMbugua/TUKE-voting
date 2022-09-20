@@ -1,12 +1,12 @@
 body {
-    background: #d8d8d8;
+    background: #ffffff;
     color: #333333;
   }
 .sp_colour{
   background-color: rgb(212, 231, 226);
 }
 .content-section {
-    background: rgb(238, 238, 238);
+    background: rgb(212, 231, 226);
     padding: 10px 20px;
     border: 1px solid #dddddd;
     border-radius: 3px;

@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileAllowed, FileField
+from flask_wtf.file import FileAllowed, FileField, FileRequired
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError    
 
 from tukevoting.models import Voter, Admin, CandidateModel
-
+from tukevoting.__init__ import photos
 
 class RegistrationForm(FlaskForm):
     voter_id = StringField('Voter ID', validators=[DataRequired(), Length(min=2, max=20)])
@@ -14,7 +14,7 @@ class RegistrationForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])   
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
@@ -62,7 +62,7 @@ class UpdateAccountForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    picture = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
+    picture = FileField('Update profile picture', validators=[FileAllowed(photos, 'Only images Are Allowed'), FileRequired('Image required')])
     submit = SubmitField('Update')
 
     def validate_email(self, email):

@@ -1,15 +1,17 @@
 from datetime import datetime
+from email.mime import image
 import secrets
 import os
 import json
 from PIL import Image
-from flask import render_template,url_for, flash, redirect, request, abort, make_response, jsonify
+from flask import render_template,url_for, flash, redirect, request, abort, make_response, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from tukevoting import app, db, bcrypt
 from tukevoting.models import Voter, CandidateModel, VoterFaces, Votes
 from tukevoting.forms import AdminForm, RegistrationForm, LoginForm, CandidateForm, VoteForm, UpdateAccountForm
 from flask_login import login_user, login_required, current_user, logout_user
 from tukevoting.face_rec  import run_face_rec
+from tukevoting.__init__ import photos
 
 #Define the home page route url 
 @app.route("/")
@@ -211,9 +213,13 @@ def logout():
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
+    #get image file extension inorder to later save it with the same extension
     _, f_ext = os.path.splitext(form_picture.filename)
+    #combine random hex with extension to create new filename for saving
     picture_fn = random_hex + f_ext
+    #path to save uploaded picture, joined with rootpath folder location, joined with filename
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    form_picture.save(picture_path)
 
     output_size = (125, 125)
     i = Image.open(form_picture)
@@ -222,14 +228,22 @@ def save_picture(form_picture):
 
     return picture_fn
 
+
+@app.route('/images/<filename>')
+def get_file(filename):
+    return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'],filename)
+
+
+
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
-    if form.validate_on_submit():
-        if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file  
+    if form.is_submitted():
+        filename = photos.save(form.picture.data)
+        file_url = url_for('get_file', filename=filename)
+        flash(file_url)
+        current_user.image_file = filename
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.school = form.school.data
@@ -238,31 +252,21 @@ def account():
         flash('Your account  has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
+        file_url = None
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
         form.school.data = current_user.school
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file) 
-    return render_template("account.html", title='Account', image_file=image_file, form=form)
+    return render_template("account.html", title='Account', form=form, file_url=file_url)
 
+    #image_file = url_for('static', filename='profile_pics/' + current_user.image_file) 
 @app.route('/info/<string:first_name>')
 @login_required
 def candidate(first_name):
     edit_candidate = CandidateModel.query.filter_by(first_name=first_name).first()
     return render_template('candidate.html', title='Edit Candidate Information', candidate=edit_candidate)
 
-def save_picture2(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
 
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
-    return picture_fn
 
 @app.route('/info/<string:first_name>/update', methods=['GET', 'POST'])
 @login_required
@@ -279,7 +283,7 @@ def update_candidate(first_name):
         candidate.position = form.position.data    
         candidate.description = form.description.data 
         if form.photo.data:
-            picture_file = save_picture2(form.photo.data)
+            picture_file = save_picture(form.photo.data)
             candidate.image_file = picture_file
         db.session.commit()
         flash('Candidate information updated successfully', 'success')
