@@ -1,10 +1,10 @@
 from datetime import datetime
-from re import S
 import secrets
 import os
 import json
 from PIL import Image
 from flask import render_template,url_for, flash, redirect, request, abort, make_response, jsonify
+from werkzeug.utils import secure_filename
 from tukevoting import app, db, bcrypt
 from tukevoting.models import Voter, CandidateModel, VoterFaces, Votes
 from tukevoting.forms import AdminForm, RegistrationForm, LoginForm, CandidateForm, VoteForm, UpdateAccountForm

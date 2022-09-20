@@ -2,9 +2,11 @@ body {
     background: #d8d8d8;
     color: #333333;
   }
-
+.sp_colour{
+  background-color: rgb(212, 231, 226);
+}
 .content-section {
-    background: #ffffff;
+    background: rgb(238, 238, 238);
     padding: 10px 20px;
     border: 1px solid #dddddd;
     border-radius: 3px;
@@ -15,13 +17,16 @@ body {
 img {
   max-width: 400px;
 }
+.card-img-top{
+  max-width: 200px;
+}
 
 .navbar-custom {
-  background-color: rgb(80, 180, 163);
+  background-color: rgb(212, 231, 226);
 }
 
 a{
-  color: rgb(80, 180, 163);
+  color: rgb(200, 228, 220);
 }
 a.identity{
   color: rgb(111, 196, 182);

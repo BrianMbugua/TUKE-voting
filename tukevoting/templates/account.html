@@ -6,22 +6,28 @@
 <div class="container text-center">
     <h3>Account Details</h3>
 </div>
-<div class="container">
+<div class="container content-section">
     <div class="row">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <img class="card-img-top" src="{{ image_file }}">
-                    <div class="media-body">
-                        <h2 class="account-heading">{{ current_user.first_name }}</h2>
-                        <p class="text-secondary">{{ current_user.email }}</p>
-                    </div>
+            <div class="card border-dark mb-3 sp_colour h-100">
+                <div class="row">
+                    
+                        <img alt="Profile Picture" class="rounded-circle card-img-top ms-5 mt-5 me-5 mb-1" src="{{ image_file }}">
+                    
+                    
+                        <div class="card-body">
+                            <div class="media-body mt-5 ms-5">
+                                <h2 class="card-title">{{ current_user.first_name }}</h2>
+                                <p class="card-text">{{ current_user.email }}</p>
+                            </div>
+                        </div>
+                    
                 </div>
             </div>
         </div>
 
         <div class="col">
-            <div class="card">
+            <div class="card border-dark mb-3 sp_colour h-100">
                 <div class="card-body">
                     <form method="POST" action="" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
