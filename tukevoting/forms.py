@@ -45,7 +45,7 @@ class AdminForm(FlaskForm):
 
 
 class CandidateForm(FlaskForm):
-    candidate_id = StringField('Candidate ID', validators=[DataRequired(), Length(min=12, max=20)])
+    candidate_id = StringField('Candidate ID', validators=[DataRequired(), Length(min=9, max=20)])
     roll_num = StringField('Roll Number', validators=[DataRequired(), Length(min=4, max=6)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=4, max=15)])
     last_name = StringField('Second Name', validators=[DataRequired(), Length(min=4, max=15)])

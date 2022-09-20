@@ -79,7 +79,7 @@ def admin():
         return render_template('admin.html', form=form, image_file=image_file, legend='Register Candidate')
     else:
         flash("You must be the Admin to access this page", 'danger')
-        return render_template('home.html', title='Dashboard')
+        return render_template('home.html', title='Home')
 
 
 
@@ -107,7 +107,7 @@ def vote():
         else:
             flash('You Have Already Voted','success')
             return render_template('vote.html')
-        return render_template('vote.html', form=form)
+        return render_template('vote.html',title='Vote', form=form)
     else:
         flash("Face Not Verified", "danger")
         return render_template('home.html')
@@ -150,7 +150,7 @@ def counter():
         mimetype='application/json'
     )
 
-    return render_template('counter.html',labels=labels,data=data,labels1=labels1,data1=data1)
+    return render_template('counter.html', title='Results',labels=labels,data=data,labels1=labels1,data1=data1)
 
 
 @app.route("/counter/live", methods=['GET','POST'])
@@ -198,7 +198,7 @@ def counter_live():
 @login_required
 def info():
     display_candidate = CandidateModel.query.all()
-    return render_template("info.html", title='Info', candidate=display_candidate)
+    return render_template("info.html", title='Candidate Info', candidate=display_candidate)
 
 
 
@@ -308,16 +308,19 @@ def delete_candidate(first_name):
 @app.route("/faces")
 @login_required
 def faces():
-    if current_user.voted == True:
+    v = current_user.roll_num
+    x = VoterFaces.query.filter(VoterFaces.roll_num == v).first()
+    if x: 
         flash('Identity Already Verified','info')
         return redirect(url_for('vote'))
     else:
         run_face_rec()
-        flash('Identity Verified', 'info')
+        if x:
+            flash('Identity Verified', 'success')
         return redirect(url_for('vote'))
     
 @app.route("/transactions")
 @login_required
 def transactions():
     show_dates = Votes.query.all()
-    return render_template("transactions.html", date=show_dates)
+    return render_template("transactions.html",title='Votes Ledger', date=show_dates)
