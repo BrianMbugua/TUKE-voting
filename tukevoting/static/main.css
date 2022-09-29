@@ -20,13 +20,16 @@ img {
 .card-img-top{
   max-width: 200px;
 }
+.card{
+  background-color: rgb(212, 231, 226);
+}
 
-.navbar-custom {
+.navbar {
   background-color: rgb(212, 231, 226);
 }
 
 a{
-  color: rgb(200, 228, 220);
+  color: rgb(0, 0, 0);
 }
 a.identity{
   color: rgb(111, 196, 182);

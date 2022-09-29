@@ -8,9 +8,8 @@
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for candidate in candidate %}
             <div class="col">
-                <div class="card">
-                    
-                    <img class="card-img-top center" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
+                <div class="card h-100">
+                    <img class="rounded-circle card-img-top ms-4 mt-4" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
                     <div class="card-body">                
                         <h3 class="card-title mb-2">
                             <a href=" {{ url_for('candidate', first_name=candidate.first_name)}} " class="card-link">

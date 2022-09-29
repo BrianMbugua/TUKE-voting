@@ -5,7 +5,6 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Selec
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError    
 
 from tukevoting.models import Voter, Admin, CandidateModel
-from tukevoting.__init__ import photos
 
 class RegistrationForm(FlaskForm):
     voter_id = StringField('Voter ID', validators=[DataRequired(), Length(min=2, max=20)])
@@ -62,7 +61,7 @@ class UpdateAccountForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    picture = FileField('Update profile picture', validators=[FileAllowed(photos, 'Only images Are Allowed'), FileRequired('Image required')])
+    picture = FileField('Update profile picture')
     submit = SubmitField('Update')
 
     def validate_email(self, email):
@@ -94,5 +93,5 @@ def school_rep_cand():
 class VoteForm(FlaskForm):
     delegate = SelectField('Delegate', choices=delegate_cand)
     school_rep = SelectField('School Rep', choices=school_rep_cand)
-    submit = SubmitField('Submit')
+    submit = SubmitField('Vote')
 

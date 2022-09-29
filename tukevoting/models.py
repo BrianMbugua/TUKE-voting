@@ -24,7 +24,7 @@ class Voter(db.Model, UserMixin):
     voted = db.Column(db.Boolean, default=False, nullable=False)
     #Define how the tables data should be represented during querying
     def __repr__(self):
-        return f"Voter('{self.first_name}', '{self.email}','{self.voter_id}','{self.voted}' )"
+        return f"Voter('{self.first_name}', '{self.email}','{self.voter_id}','{self.voted}',{self.image_file} )"
 
 
 #Create Candidate table

@@ -11,12 +11,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '6c873d2051c8a755aaa19e3969893ebd'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db?check_same_thread=False'
 app.config['SESSION_COOKIE_SECURE'] = False
-app.config['UPLOADED_PHOTOS_DEST'] = 'tukevoting/images'
+app.config['UPLOAD_FOLDER'] = 'tukevoting/static/profile_pics'
 
 
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)

@@ -11,7 +11,11 @@
     <div class="container text-center">
     <div class="card">
         <div style="width:100%; text-align:center">
-            <img class="card-img-top rounded-circle article-img align-center" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
+            {% if candidate.image_file %}
+                <img alt="{{ candidate.first_name }}"  class="card-img-top rounded-circle mt-4 align-center" src="{{ url_for('static', filename='profile_pics/' + candidate.image_file) }}">
+            {% else %}
+            <img alt="{{ candidate.first_name }}"  class="card-img-top rounded-circle mt-4 align-center" src="{{ url_for('static', filename='profile_pics/' + pic) }}">
+            {% endif %}
         </div>
         <div class="card-body">
             <div class="card-title">

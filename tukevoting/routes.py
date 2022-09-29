@@ -1,17 +1,21 @@
+
 from datetime import datetime
 from email.mime import image
+from fileinput import filename
 import secrets
 import os
 import json
 from PIL import Image
 from flask import render_template,url_for, flash, redirect, request, abort, make_response, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+import uuid as uuid
 from tukevoting import app, db, bcrypt
 from tukevoting.models import Voter, CandidateModel, VoterFaces, Votes
 from tukevoting.forms import AdminForm, RegistrationForm, LoginForm, CandidateForm, VoteForm, UpdateAccountForm
 from flask_login import login_user, login_required, current_user, logout_user
 from tukevoting.face_rec  import run_face_rec
-from tukevoting.__init__ import photos
+
+
 
 #Define the home page route url 
 @app.route("/")
@@ -229,10 +233,6 @@ def save_picture(form_picture):
     return picture_fn
 
 
-@app.route('/images/<filename>')
-def get_file(filename):
-    return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'],filename)
-
 
 
 @app.route("/account", methods=['GET', 'POST'])
@@ -240,26 +240,32 @@ def get_file(filename):
 def account():
     form = UpdateAccountForm()
     if form.is_submitted():
-        filename = photos.save(form.picture.data)
-        file_url = url_for('get_file', filename=filename)
-        flash(file_url)
-        current_user.image_file = filename
+        current_user.image_file = form.picture.data
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.school = form.school.data
         current_user.email = form.email.data
+        
+        #Grab Image Name
+        pic_filename = secure_filename(current_user.image_file.filename)
+        #Set UUID
+        pic_name = str(uuid.uuid1()) + "_" + pic_filename
+        # Save Image
+        current_user.image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+        flash(pic_name)
+        #Change to string, save to db
+        current_user.image_file = pic_name
         db.session.commit()
         flash('Your account  has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
-        file_url = None
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
         form.school.data = current_user.school
         form.email.data = current_user.email
-    return render_template("account.html", title='Account', form=form, file_url=file_url)
+    return render_template("account.html", title='Account', form=form)
 
-    #image_file = url_for('static', filename='profile_pics/' + current_user.image_file) 
+     
 @app.route('/info/<string:first_name>')
 @login_required
 def candidate(first_name):
@@ -276,27 +282,37 @@ def update_candidate(first_name):
         abort(403)
     form = CandidateForm()
     if form.validate_on_submit():
+        
+        candidate.image_file = form.photo.data
         candidate.candidate_id = form.candidate_id.data
+        candidate.roll_num = form.roll_num.data
         candidate.first_name = form.first_name.data  
         candidate.last_name = form.last_name.data   
         candidate.school = form.school.data      
         candidate.position = form.position.data    
         candidate.description = form.description.data 
-        if form.photo.data:
-            picture_file = save_picture(form.photo.data)
-            candidate.image_file = picture_file
+
+        #Grab Image Name
+        pic_filename = secure_filename(candidate.image_file.filename)
+        #Set UUID
+        pic_name = str(uuid.uuid1()) + "_" + pic_filename
+        # Save Image
+        candidate.image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+        flash(pic_name)
+        #Change to string, save to db
+        candidate.image_file = pic_name
         db.session.commit()
         flash('Candidate information updated successfully', 'success')
-        return render_template('candidate.html', candidate=candidate)
+        return render_template('candidate.html', candidate=candidate, pic=pic_name)
     elif request.method == 'GET':
         form.candidate_id.data = candidate.candidate_id
+        form.roll_num.data = candidate.roll_num
         form.first_name.data   = candidate.first_name
         form.last_name.data    = candidate.last_name
         form.school.data       = candidate.school
         form.position.data     = candidate.position
         form.description.data  = candidate.description
-    image_file = url_for('static', filename='profile_pics/' + candidate.image_file) 
-    return render_template('admin.html', title = 'Update Candidate Information', form=form, legend='Update Candidate Information', image_file=image_file)
+    return render_template('admin.html', title = 'Update Candidate Information', form=form, legend='Update Candidate Information')
 
 @app.route('/info/<string:first_name>/delete', methods=['POST'])
 @login_required

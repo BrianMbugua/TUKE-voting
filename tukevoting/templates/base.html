@@ -14,65 +14,64 @@
     {% endblock %}
 </head>
 <body>
-    <nav class="navbar-custom navbar-expand-lg sticky-top">
-        <div class="container-fluid me-4">
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
             {% if current_user.voter_id != 'admin001' %}
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link" href="{{url_for('home')}}">TUKE-Vote</a>
-                </li>
-              </ul>
+              <a class="navbar-brand" href="{{url_for('home')}}">TUKE-Vote</a>
             {% endif %}
-            {% if current_user.voter_id == 'admin001' %}
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              {% if current_user.voter_id == 'admin001' %}
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
+                  <li class="nav-item">
+                    <a class="nav-link ps-4" href="{{url_for('admin')}}">Register Candidate</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link ps-4" href="{{url_for('info')}}">View and Edit Candidate Details</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link ps-4" href="{{url_for('counter')}}">View Results</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link ps-4" href="{{url_for('transactions')}}">Votes Legder</a>
+                  </li>
+                </ul>
+              {% else %}
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
                 <li class="nav-item">
-                  <a class="nav-link ps-4" href="{{url_for('admin')}}">Register Candidate</a>
+                  <a class="nav-link ps-4"  href="{{url_for('vote')}}">Vote</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link ps-4" href="{{url_for('info')}}">View and Edit Candidate Details</a>
+                  <a class="nav-link ps-4" href="{{url_for('info')}}">Candidate Information</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link ps-4" href="{{url_for('counter')}}">View Results</a>
+                  <a class="nav-link ps-4" href="{{url_for('counter')}}">Results</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link ps-4" href="{{url_for('transactions')}}">Votes Legder</a>
                 </li>
               </ul>
-            {% else %}
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
-              <li class="nav-item">
-                <a class="nav-link ps-4"  href="{{url_for('vote')}}">Vote</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link ps-4" href="{{url_for('info')}}">Candidate Information</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link ps-4" href="{{url_for('counter')}}">Results</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link ps-4" href="{{url_for('transactions')}}">Votes Legder</a>
-              </li>
-            </ul>
-            {% endif %}
-            <ul class="navbar-nav justify-content-end pe-4">
-              {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                  <a class="nav-link ps-4" href="{{url_for('account')}}">Account</a>
-                </li>
-                <li class="nav-item ps-4">
-                  <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
-                </li>
-              {% else %}
-                <li class="nav-item ps-4">
-                  <a class="nav-link" href="{{url_for('login')}}">Login</a>
-                </li>
-                <li class="nav-item ps-4 ps-4">
-                  <a class="nav-link" href="{{url_for('register')}}">Register</a>
-                  </li>
-            </ul>
               {% endif %}
-          </div>
+              <ul class="navbar-nav justify-content-end pe-4">
+                {% if current_user.is_authenticated %}
+                  <li class="nav-item">
+                    <a class="nav-link ps-4" href="{{url_for('account')}}">Account</a>
+                  </li>
+                  <li class="nav-item ps-4">
+                    <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+                  </li>
+                {% else %}
+                  <li class="nav-item ps-4">
+                    <a class="nav-link" href="{{url_for('login')}}">Login</a>
+                  </li>
+                  <li class="nav-item ps-4 ps-4">
+                    <a class="nav-link" href="{{url_for('register')}}">Register</a>
+                    </li>
+              </ul>
+                {% endif %}
+            </div>
         </div>
       </nav>
 
