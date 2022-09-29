@@ -1,12 +1,42 @@
 body {
-    background: #fafafa;
+    background: #ffffff;
     color: #333333;
   }
-
+.sp_colour{
+  background-color: rgb(212, 231, 226);
+}
 .content-section {
-    background: #ffffff;
+    background: rgb(212, 231, 226);
     padding: 10px 20px;
     border: 1px solid #dddddd;
     border-radius: 3px;
     margin-bottom: 20px;
+    align-items: center;
   }
+
+img {
+  max-width: 400px;
+}
+.card-img-top{
+  max-width: 200px;
+}
+.card{
+  background-color: rgb(212, 231, 226);
+}
+
+.navbar {
+  background-color: rgb(212, 231, 226);
+}
+
+a{
+  color: rgb(0, 0, 0);
+}
+a.identity{
+  color: rgb(111, 196, 182);
+  background-color: rgb(28, 53, 49);
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 15rem;
+}

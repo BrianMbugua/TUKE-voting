@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if current_user.first_name == 'Admin' %}
+    <div class="container text-center">
+        <h3>Edit Candidate Information</h3>
+    {% else %}
+        <h3>Candidate Information</h3>
+    {% endif %}
+    </div>
+    <div class="container text-center">
+    <div class="card">
+        <div style="width:100%; text-align:center">
+            {% if candidate.image_file %}
+                <img alt="{{ candidate.first_name }}"  class="card-img-top rounded-circle mt-4 align-center" src="{{ url_for('static', filename='profile_pics/' + candidate.image_file) }}">
+            {% else %}
+            <img alt="{{ candidate.first_name }}"  class="card-img-top rounded-circle mt-4 align-center" src="{{ url_for('static', filename='profile_pics/' + pic) }}">
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="card-title">
+                <h2>
+                    <small class="card-text"> {{candidate.first_name}} </small>
+                    <small class="card-text"> {{candidate.last_name}} </small>
+                </h2>
+            </div>
+                <p class="card-text">School: {{candidate.school}} </p>
+                <p class="card-text">Position: {{candidate.position}} </p>
+                <h4>
+                    <p class="text">Manifesto </p> 
+                    <p class="text-muted"> {{candidate.description}} </p>
+                </h4>
+                {% if current_user.first_name == 'Admin' %}
+                    <div>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1"  href=" {{url_for('update_candidate', first_name=candidate.first_name)}} ">Update</a>
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                    </div>
+                {% endif %}
+        </div>
+    </div>
+</div>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Candidate?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <form action=" {{ url_for('delete_candidate', first_name=candidate.first_name) }} " method="POST">
+                    <input class="btn btn-danger" type="submit" value="Delete">
+                </form>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

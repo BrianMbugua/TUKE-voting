@@ -1,0 +1,10 @@
+flash(candidate.image_file)
+        #Grab Image Name
+        pic_filename = secure_filename(candidate.image_file.filename)
+        #Set UUID
+        pic_name = str(uuid.uuid1()) + "_" + pic_filename
+        # Save Image
+        candidate.image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+        flash(pic_name)
+        #Change to string, save to db
+        candidate.image_file = pic_name
