@@ -27,4 +27,33 @@
                 </ul>
             {% endfor %}
 </div>
+
+
+<div class="container text-center mt-1">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+<div>
+    {% for y in y %}
+        <div class="col">
+            <div class="card h-100">
+                <img class="rounded-circle card-img-top ms-4 mt-4" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + y.image_file)}} ">
+                <div class="card-body">                
+                    <h3 class="card-title mb-2">
+                            <p class="card-text"> {{y.first_name}} {{y.last_name}}</p>
+                    </h3>
+                    <p class="card-title">School: {{y.school}} </p>
+                    <p class="card-title">Position: {{y.position}} </p>
+                    <h5>
+                        <p class="card-subtitle text-muted">Manifesto </p> 
+                        <p class="text"> {{y.description}} </p>
+                    </h5>
+                </div>
+            </div>
+        </div>    
+    {% endfor %} 
+</div>  
+</div>    
+    
+    {% for x in x %}
+    {% endfor %}
+</div>
 {% endblock %}

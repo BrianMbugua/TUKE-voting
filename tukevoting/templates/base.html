@@ -17,12 +17,15 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
             {% if current_user.voter_id != 'admin001' %}
-              <a class="navbar-brand" href="{{url_for('home')}}">TUKE-Vote</a>
+              <a class="navbar-brand" href="{{url_for('home')}}">
+                <img src="static/logo/tuk2.svg" alt="TUK logo" width="30" height="24" class="d-inline-block align-text-top">
+                TUKE-Vote
+              </a>
             {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse" id="navbarNav">
               {% if current_user.voter_id == 'admin001' %}
               <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
                   <li class="nav-item">

@@ -88,12 +88,9 @@ def admin():
         return render_template('home.html', title='Home')
 
 
-
-
 @app.route("/vote/", methods=['GET', 'POST'])
 @login_required
 def vote():
-
     
     v = current_user.roll_num
     x = VoterFaces.query.filter(VoterFaces.roll_num == v).first()
@@ -338,9 +335,20 @@ def faces():
         if x:
             flash('Identity Verified', 'success')
         return redirect(url_for('vote'))
-    
+
+
+
+def delegate_cand():
+    return CandidateModel.query.filter_by(position='Delegate', school=current_user.school)
+
+def school_rep_cand():
+    return CandidateModel.query.filter_by(position='School Rep', school=current_user.school)
+
+
 @app.route("/transactions")
 @login_required
 def transactions():
     show_dates = Votes.query.all()
-    return render_template("transactions.html",title='Votes Ledger', date=show_dates)
+    x = delegate_cand()
+    y = school_rep_cand()
+    return render_template("transactions.html",title='Votes Ledger', date=show_dates, x=x, y=y)
