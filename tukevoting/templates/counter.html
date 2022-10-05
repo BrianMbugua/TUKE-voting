@@ -1,5 +1,213 @@
 {% extends "base.html" %}
 
+
+{% block styles %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+{% endblock %}
+
 {% block content %}
-    <h1> Counter Page </h1>
+<div class="container text-center">
+    <h3 class="ms-4 me-4 ">Candidate Results</h3>
+</div>
+
+<div class ="container content-section text-center">
+    <div class="row">
+        <div class="col" >   
+            <canvas id="delegateChart" width="500" height="500"></canvas>
+            <script>
+                const ctxDel = document.getElementById('delegateChart').getContext('2d');
+                const delegateChart = new Chart(ctxDel, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ labels | tojson }},
+                        datasets: [{
+                            label: 'Delegate Votes',
+                            data: {{ data | tojson }},
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        responsive: false,
+                        maintainAspectRatio: true
+                    }
+                });
+            </script>
+            <br>
+            <br>
+        </div>
+        <div class="col" >
+            <canvas id="schoolrepChart" width="500" height="500"></canvas>
+            <script>
+                const ctxSch = document.getElementById('schoolrepChart').getContext('2d');
+                const schoolrepChart = new Chart(ctxSch, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ labels1 | tojson }},
+                        datasets: [{
+                            label: 'School Representative Votes',
+                            data: {{ data1 | tojson }},
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        responsive: false,
+                        maintainAspectRatio: true
+                    }
+                });
+
+
+    setInterval(function(callback){
+    const Http = new XMLHttpRequest({mozSystem: true});
+    const url='http://localhost:5000/counter/live';
+    Http.open("GET", url);
+    Http.setRequestHeader("Access-Control-Allow-Origin","*");
+    Http.setRequestHeader("Access-Control-Allow-Credentials", "true");
+    Http.setRequestHeader("Access-Control-Allow-Methods", "GET");
+    Http.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    Http.send();
+    Http.onreadystatechange = function(){
+        if(Http.readyState == 4){
+            var result = JSON.parse(Http.responseText);
+            // var label = Object.keys(labels).map(function (key) { return labels[key]; });
+        
+            var ctxDel = document.getElementById('delegateChart').getContext('2d');
+            var delegateChart = new Chart(ctxDel, {
+                type: 'bar',
+                data: {
+                    labels: result.labels,
+                    datasets: [{
+                        label: 'Delegate Votes',
+                        data: result.data,
+                        backgroundColor: [
+                            'rgba(85,107,47,0.2)',
+                            'rgba(124,252,0, 0.2)',
+                            'rgba(0,128,0, 0.2)',
+                            'rgba(144,238,144, 0.2)',
+                            'rgba(0,255,127, 0.2)',
+                            'rgba(240,230,140, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                    stepSize: 1
+                                }
+                        }
+                    }
+                }
+            });
+            var ctxSch = document.getElementById('schoolrepChart').getContext('2d');
+            var schoolrepChart = new Chart(ctxSch, {
+                type: 'bar',
+                data: {
+                    labels: result.labels1,
+                    datasets: [{
+                        label: 'School Representative Votes',
+                        data: result.data1,
+                        backgroundColor: [
+                            'rgba(85,107,47,0.2)',
+                            'rgba(124,252,0, 0.2)',
+                            'rgba(0,128,0, 0.2)',
+                            'rgba(144,238,144, 0.2)',
+                            'rgba(0,255,127, 0.2)',
+                            'rgba(240,230,140, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                            'rgba(255, 255, 255, 1)',
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                    stepSize: 1
+                                }
+                        }
+                    }
+                }
+            });
+            delegateChart.update('none');
+            schoolrepChart.update('none');
+        }
+        }
+  
+            }, 5000);
+
+
+
+            </script>
+        </div>
+    </div>
+</div>
 {% endblock content %}
