@@ -249,7 +249,6 @@ def account():
         pic_name = str(uuid.uuid1()) + "_" + pic_filename
         # Save Image
         current_user.image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
-        flash(pic_name)
         #Change to string, save to db
         current_user.image_file = pic_name
         db.session.commit()
@@ -295,7 +294,6 @@ def update_candidate(first_name):
         pic_name = str(uuid.uuid1()) + "_" + pic_filename
         # Save Image
         candidate.image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
-        flash(pic_name)
         #Change to string, save to db
         candidate.image_file = pic_name
         db.session.commit()

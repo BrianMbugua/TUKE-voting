@@ -3,7 +3,11 @@
 {% block content %}
 
 <div class="container text-center">
+    {% if current_user.voter_id == admin001 %}
+    <h3>Edit Candidate Details</h3>
+    {% else %}
     <h3>Register Candidate</h3>
+    {% endif %}
 </div>
 <div class="container content-section">
     <form method="POST" action="" enctype="multipart/form-data">

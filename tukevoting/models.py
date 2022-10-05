@@ -55,7 +55,7 @@ class Votes(db.Model):
 
 class VoterFaces(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    roll_num = db.Column(db.Integer, db.ForeignKey('voter.voter_id'), nullable=False, unique=True)
+    roll_num = db.Column(db.Integer, db.ForeignKey('voter.roll_num'), nullable=False, unique=True)
     allow_vote = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
