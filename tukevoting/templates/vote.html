@@ -25,7 +25,7 @@
                     {{ form.school_rep(class="form-control form-control-lg", id="school_rep") }}
                 </div>
                 <div class="form-group">
-                    {{ form.submit(class="btn btn-outline-info", onclick="submit_vote();") }}
+                    {{ form.submit(class="btn btn-outline-info") }}
                 </div> 
             </fieldset>
         </form>
@@ -36,49 +36,54 @@
     </div>
     {% endif %}
     
+    
+    <div class="container text-center mt-1">
+        <h3>{{current_user.school}} Candidates</h3>
+        <div class="row row-cols-1 row-cols-md-4 g-4">  
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            <div class="col">
+                <h2>Delegates</h2></div>
+            <div class="col">
+                <h2>School Representatives</h2></div>
+        </div>    
+            {% for candidate in candidate %}
+            <div class="col">
+                <div class="card h-100">
+                    <img class="rounded-circle card-img-top ms-4 mt-4" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
+                    <div class="card-body">                
+                        <h4 class="card-title mb-2">
+                            <a href=" {{ url_for('candidate', first_name=candidate.first_name)}} " class="card-link">
+                                <p class="card-text"> {{candidate.first_name}} {{candidate.last_name}}</p>
+                            </a>
+                        </h4>
+                        <h4 class="card-text text-muted">{{candidate.position}} </h4>
+                    </div>
+                </div>
+            </div>  
+            {% endfor %}  
 
+        
+            {% for candidate in candidate2 %}
+            <div class="col">
+            
+
+                <div class="card h-100">
+                    <img class="rounded-circle card-img-top ms-4 mt-4" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
+                    <div class="card-body">                
+                        <h4 class="card-title mb-2">
+                            <a href=" {{ url_for('candidate', first_name=candidate.first_name)}} " class="card-link">
+                                <p class="card-text"> {{candidate.first_name}} {{candidate.last_name}}</p>
+                            </a>
+                        </h4>
+                        <h4 class="card-text text-muted">{{candidate.position}} </h4>
+                    </div>
+                </div>
+            </div>  
+            {% endfor %} 
+
+    </div> 
+</div> 
 
     
 
 {% endblock content %}
-
-{% block script %}
-<script>
-   
-    const data_delegate = [];
-    const data_school_rep = [];
-    async function submit_vote(){
-        
-        const delegate = document.getElementById("delegate");   
-        
-        const school_rep = document.getElementById("school_rep");
-
-        const vote_school_rep = {
-            school_rep: school_rep.value
-        };
-        data_school_rep.push(vote_school_rep);
-        
-
-
-        const vote_delegate = {
-            delegate: delegate.value
-        };
-        data_delegate.push(vote_delegate);
-
-        const response = await fetch(`${window.origin}/vote/`, {
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify(vote_school_rep, vote_delegate),
-            cache: "no-cache",
-            headers: new Headers({
-                "Content-Type": "application/json"
-            })
-        });
-        
-        
-    }           
-     
-    submit_vote();
-    print(data_school_rep);
-</script>
-{% endblock %}

@@ -1,10 +1,12 @@
-from cgitb import small
+
 import face_recognition
 import cv2
 import numpy as np
 from tukevoting.models import VoterFaces
 from flask_login import current_user
 from tukevoting import db
+from tukevoting.models import Voter, VoterFaces
+from flask import flash
 
 def run_face_rec():
 
@@ -26,13 +28,18 @@ def run_face_rec():
     ]
     known_face_names = [
         "Brian Mbugua",
-        "Voter 1"
+        "Emilia Clarke"
+    ]
+    known_roll_num = [
+        565565,
+        165164
     ]
 
     # Initialize some variables
     face_locations = []
     face_encodings = []
     face_names = []
+    face_nums = []
     process_this_frame = True
 
     while True:
@@ -52,6 +59,7 @@ def run_face_rec():
             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
             face_names = []
+            face_nums = []
             
             for face_encoding in face_encodings:
                 # See if the face is a match for the known face(s)
@@ -69,8 +77,14 @@ def run_face_rec():
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
+                    rollnum = known_roll_num[best_match_index]
+
+
+                    #video_capture.release()
+                    #cv2.destroyAllWindows()
 
                 face_names.append(name)
+                face_nums.append(rollnum)
             
                 
 
@@ -93,8 +107,10 @@ def run_face_rec():
             cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, "PRESS Q WHEN DONE", (50, 50), font, 1.0, (255, 255, 255), 1)
 
-        # Display the resulting image
+
+        # Display the resulting image 
         cv2.imshow('Video', frame)
 
         # Hit 'q' on the keyboard to quit!
@@ -107,12 +123,14 @@ def run_face_rec():
     cv2.destroyAllWindows()
 
     if matches[best_match_index]:
-        allow_to_vote = VoterFaces(roll_num=current_user.roll_num, allow_vote=True)
-        db.session.add(allow_to_vote)
-        db.session.commit()
+        if current_user.roll_num == known_roll_num[best_match_index]:
+            allow_to_vote = VoterFaces(roll_num=current_user.roll_num, allow_vote=True)
+            db.session.add(allow_to_vote)
+            db.session.commit()
+        else:
+            flash("Not your face", 'danger')
 
     
     
     
-    
-    
+     

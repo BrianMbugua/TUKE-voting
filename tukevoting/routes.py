@@ -91,7 +91,8 @@ def admin():
 @app.route("/vote/", methods=['GET', 'POST'])
 @login_required
 def vote():
-    
+    delegate = CandidateModel.query.filter(CandidateModel.school == current_user.school, CandidateModel.position == 'Delegate')
+    sch_rep = CandidateModel.query.filter(CandidateModel.school == current_user.school, CandidateModel.position == 'School Rep')
     v = current_user.roll_num
     x = VoterFaces.query.filter(VoterFaces.roll_num == v).first()
     if x:
@@ -106,11 +107,11 @@ def vote():
                 db.session.add(my_vote, has_voted)
                 db.session.commit()
                 flash('Vote Cast Successfully!', 'success')
-                return render_template("vote.html", form=form)
+                return render_template("vote.html", form=form, candidate=delegate, candidate2=sch_rep)
         else:
             flash('You Have Already Voted','success')
             return render_template('vote.html')
-        return render_template('vote.html',title='Vote', form=form)
+        return render_template('vote.html',title='Vote', form=form,  candidate=delegate, candidate2=sch_rep)
     else:
         flash("Face Not Verified", "danger")
         return render_template('home.html')

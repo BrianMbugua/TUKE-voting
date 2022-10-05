@@ -17,8 +17,8 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
             {% if current_user.voter_id != 'admin001' %}
+              <img src="static/logo/tuk2.svg" alt="evote" width="30" height="24" class="d-inline-block align-text-top">
               <a class="navbar-brand" href="{{url_for('home')}}">
-                <img src="static/logo/tuk2.svg" alt="TUK logo" width="30" height="24" class="d-inline-block align-text-top">
                 TUKE-Vote
               </a>
             {% endif %}
