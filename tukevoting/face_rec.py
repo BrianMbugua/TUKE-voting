@@ -21,18 +21,31 @@ def run_face_rec():
     emilia_image = face_recognition.load_image_file("tukevoting/images/voter1/2.jpg")
     emilia_face_encoding = face_recognition.face_encodings(emilia_image)[0]
 
+    yusuf_image = face_recognition.load_image_file("tukevoting/images/voter3/1.png")
+    yusuf_face_encoding = face_recognition.face_encodings(yusuf_image)[0]
+
+    
+    nadia_image = face_recognition.load_image_file("tukevoting/images/voter2/1.jpg")
+    nadia_face_encoding = face_recognition.face_encodings(nadia_image)[0]
+
     # Create arrays of known face encodings and their names
     known_face_encodings = [
         brian_face_encoding,
-        emilia_face_encoding
+        emilia_face_encoding,
+        yusuf_face_encoding,
+        nadia_face_encoding
     ]
     known_face_names = [
         "Brian Mbugua",
-        "Emilia Clarke"
+        "Emilia Clarke",
+        "Yusuf Kamau",
+        "Nadia Fatima"
     ]
     known_roll_num = [
         565565,
-        165164
+        165164,
+        654648,
+        164864
     ]
 
     # Initialize some variables

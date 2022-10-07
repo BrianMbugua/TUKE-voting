@@ -29,7 +29,7 @@
               {% if current_user.voter_id == 'admin001' %}
               <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
                   <li class="nav-item">
-                    <a class="nav-link ps-4" href="{{url_for('admin')}}">Register Candidate</a>
+                    <a class="nav-link active ps-4" aria-current="page" href="{{url_for('admin')}}">Register Candidate</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link ps-4" href="{{url_for('info')}}">View and Edit Candidate Details</a>
@@ -44,7 +44,7 @@
               {% else %}
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
                 <li class="nav-item">
-                  <a class="nav-link ps-4"  href="{{url_for('vote')}}">Vote</a>
+                  <a class="nav-link active ps-4" aria-current="page" href="{{url_for('vote')}}">Vote</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link ps-4" href="{{url_for('info')}}">Candidate Information</a>
@@ -82,9 +82,12 @@
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
+            
+          <div class="d-flex justify-content-center">
+            <div class="alert alert-{{ category }} align-self-center  w-50 ">
               {{ message }}
             </div>
+          </div>
           {% endfor%}
         {% endif %}
       {% endwith %}
