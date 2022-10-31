@@ -2,21 +2,23 @@
 
 {% block content %}
 
-    <div class="container text-center">
-        <h3>Vote</h3>
-    </div>
+
+
+
+<!------------------------------------------------------------->
+   
     
     
     {% if current_user.voted == False %}
     
     <div class="container text-center mt-1">
         <h3>{{current_user.school}} Candidates</h3>
-        <div class="row row-cols-1 row-cols-md-2 g-2">  
+        <div class="row row-cols-1 row-cols-md-2 g-0">  
             
-            <div class="col">
+            <div class="col pe-3">
                 <h2>Delegates</h2>
                 {% for candidate in candidate %}
-                <div class="col">
+                <div class="col pb-3">
                     <div class="card h-100">
                     <img class="rounded-circle card-img-top ms-4 mt-4" alt="Candidate Face" src=" {{ url_for('static', filename='profile_pics/' + candidate.image_file)}} ">
                         <div class="card-body">                
@@ -28,13 +30,13 @@
                             <h4 class="card-text text-muted">{{candidate.position}} </h4>
                         </div>
                     </div>
-                </div>  
+                </div >  
                 {% endfor %}  
             </div>
-            <div class="col">
+            <div class="col ps-3">
                 <h2>School Representatives</h2>
                 {% for candidate in candidate2 %}
-                <div class="col">
+                <div class="col pb-3">
             
 
                 <div class="card h-100">
@@ -58,25 +60,43 @@
 
     
     <div class="container content-section mt-1">
-                             
         <form method="POST" action="" >
             {{ form.hidden_tag() }}
-            <fieldset class="'form-group">
-                <legend class="border-bottom mb-4">Cast Your Vote</legend>
-                <div> 
-                    <h5>SCHOOL: {{ current_user.school }} </h5>
-                </div> 
-                <div class="form-group">
-                    {{ form.delegate.label(class="form-control-label") }}
-                    {{ form.delegate(class="form-control form-control-lg", id="delegate") }}
-                </div>             
-                <div class="form-group">
-                    {{ form.school_rep.label(class="form-control-label") }}
-                    {{ form.school_rep(class="form-control form-control-lg", id="school_rep") }}
-                </div><br>
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-info") }}
-                </div> 
+            
+            <p class="card-text">Click the input field to see the full list of candidates</p>
+        <div class="card border-success mb-3">
+            <div class="card-header">
+                <h5>{{ current_user.school }} DELEGATE BALLOT</h5>
+            </div>
+            <div class="card-body">
+                
+                <h5 class="card-title"> 
+                </h5>
+                
+                {{ form.delegate(class="form-control form-control-lg", id="delegate") }}
+            </div>
+          </div>
+
+          <br>
+        <div class="card border-primary mb-3">
+            <div class="card-header">
+                <h5>{{ current_user.school }} SCHOOL REPRESENTATIVE BALLOT</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"> 
+                </h5>
+            
+            {{ form.school_rep(class="form-control form-control-lg", id="school_rep") }}
+            
+        </div>
+      </div>
+      <br> 
+
+      <div class="form-group">
+        {{ form.submit(class="btn btn-info") }}
+    </div>
+
+                <br> 
             </fieldset>
         </form>
         {% else %}

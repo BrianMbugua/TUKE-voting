@@ -2,9 +2,6 @@
 
 {% block content %}
     <div class="container text-center">
-        <h3> {{ candidate.first_name }} Information</h3>
-    </div>
-    <div class="container text-center">
     <div class="card">
         <div style="width:100%; text-align:center">
             {% if candidate.image_file %}
@@ -26,7 +23,7 @@
                     <p class="text">Manifesto </p> 
                     <p class="text-muted"> {{candidate.description}} </p>
                 </h4>
-                {% if current_user.first_name == 'Admin' %}
+                {% if current_user.voter_id == 'admin001' %}
                     <div>
                         <a class="btn btn-secondary btn-sm mt-1 mb-1"  href=" {{url_for('update_candidate', first_name=candidate.first_name)}} ">Update</a>
                         <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>

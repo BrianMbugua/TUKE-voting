@@ -7,12 +7,12 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from tukevoting.models import Voter, Admin, CandidateModel
 
 class RegistrationForm(FlaskForm):
-    voter_id = StringField('Voter ID', validators=[DataRequired(), Length(min=2, max=20)])
+    voter_id = StringField('Registration Number', validators=[DataRequired(), Length(min=2, max=20)])
     roll_num = StringField('Roll Number', validators=[DataRequired(), Length(min=4, max=6)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=15)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('School Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])   
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
@@ -30,8 +30,8 @@ class RegistrationForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    voter_id = StringField('Voter ID', validators=[DataRequired(), Length(min=5, max=20)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    voter_id = StringField('Registration Number', validators=[DataRequired(), Length(min=5, max=20)])
+    email = StringField('School Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Log In')
@@ -44,7 +44,7 @@ class AdminForm(FlaskForm):
 
 
 class CandidateForm(FlaskForm):
-    candidate_id = StringField('Candidate ID', validators=[DataRequired(), Length(min=9, max=20)])
+    candidate_id = StringField('Registration Number', validators=[DataRequired(), Length(min=9, max=20)])
     roll_num = StringField('Roll Number', validators=[DataRequired(), Length(min=4, max=6)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=4, max=15)])
     last_name = StringField('Second Name', validators=[DataRequired(), Length(min=4, max=15)])
@@ -60,7 +60,7 @@ class UpdateAccountForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=15)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=15)])
     school = StringField('School', validators=[DataRequired(), Length(min=3, max=6)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('School Email', validators=[DataRequired(), Email()])
     picture = FileField('Update profile picture')
     submit = SubmitField('Update')
 

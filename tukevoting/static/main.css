@@ -17,6 +17,9 @@ body {
 img {
   max-width: 400px;
 }
+.img-profile{
+  border-radius: 50%;
+}
 .card-img-top{
   max-width: 200px;
 }
@@ -32,11 +35,12 @@ a{
   color: rgb(0, 0, 0);
 }
 a.identity{
-  color: rgb(111, 196, 182);
-  background-color: rgb(28, 53, 49);
+  color: rgb(0, 0, 0);
+  background-color: rgb(91, 121, 114);
   padding: 14px 25px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   width: 15rem;
+  border-radius: 10px;
 }

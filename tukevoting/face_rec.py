@@ -24,7 +24,7 @@ def run_face_rec():
     yusuf_image = face_recognition.load_image_file("tukevoting/images/voter3/1.png")
     yusuf_face_encoding = face_recognition.face_encodings(yusuf_image)[0]
 
-    
+     
     nadia_image = face_recognition.load_image_file("tukevoting/images/voter2/1.jpg")
     nadia_face_encoding = face_recognition.face_encodings(nadia_image)[0]
 

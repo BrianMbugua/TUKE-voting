@@ -17,7 +17,7 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
             {% if current_user.voter_id != 'admin001' %}
-              <img src="static/logo/tuk2.svg" alt="evote" width="30" height="24" class="d-inline-block align-text-top">
+              <img src="static/logo/tuk2.svg" alt="evote" width="50" height="40" class="d-inline-block align-text-top">
               <a class="navbar-brand" href="{{url_for('home')}}">
                 TUKE-Vote
               </a>
@@ -41,7 +41,7 @@
                     <a class="nav-link ps-4" href="{{url_for('transactions')}}">Votes Legder</a>
                   </li>
                 </ul>
-              {% else %}
+              {% elif current_user.is_authenticated %}
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
                 <li class="nav-item">
                   <a class="nav-link active ps-4" aria-current="page" href="{{url_for('vote')}}">Vote</a>
@@ -55,10 +55,9 @@
                 <li class="nav-item">
                   <a class="nav-link ps-4" href="{{url_for('transactions')}}">Votes Legder</a>
                 </li>
-              </ul>
-              {% endif %}
+              </ul> 
               <ul class="navbar-nav justify-content-end pe-4">
-                {% if current_user.is_authenticated %}
+                
                   <li class="nav-item">
                     <a class="nav-link ps-4" href="{{url_for('account')}}">Account</a>
                   </li>
@@ -81,14 +80,16 @@
     <div class="=container mt-1">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-          {% for category, message in messages %}
-            
-          <div class="d-flex justify-content-center">
-            <div class="alert alert-{{ category }} align-self-center  w-50 ">
-              {{ message }}
-            </div>
+          <div class="row  d-flex justify-content-around"> 
+            {% for category, message in messages %}
+            <div class="col ">
+              <div class="alert alert-{{ category }} w-20">
+                    <p class="text-center">{{ message }}</p>
+              </div>
+            </div> 
+            {% endfor%}
           </div>
-          {% endfor%}
+         
         {% endif %}
       {% endwith %}
       {% block content %}

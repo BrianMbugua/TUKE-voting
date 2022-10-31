@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from email.mime import image
 from fileinput import filename
 import secrets
@@ -25,7 +25,7 @@ from tukevoting.face_rec  import run_face_rec
 def home():
     
     return render_template("home.html", title='Home')
-
+ 
 #Defines the register voter url 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -99,8 +99,7 @@ def vote():
         flash("Face Verified", "info") 
         form = VoteForm()
         flash('We suggest you visit the Candidate Information page, to learn about your aspirants before you proceed to vote. Thankyou.', 'info')
-        if current_user.voted == False:
-            flash('You Have Not Voted','danger')
+        if current_user.voted != True:
             if form.is_submitted():
                 my_vote = Votes(id=current_user.id, roll_num=current_user.roll_num, voter_id=current_user.voter_id, post_1=form.delegate.data, post_2=form.school_rep.data)
                 has_voted = current_user.voted=True
@@ -275,7 +274,7 @@ def candidate(first_name):
 @login_required
 def update_candidate(first_name):
     candidate = CandidateModel.query.filter_by(first_name=first_name).first()
-    if current_user.first_name != 'Admin' :
+    if current_user.voter_id != 'admin001' :
         abort(403)
     form = CandidateForm()
     if form.validate_on_submit():
@@ -347,7 +346,8 @@ def school_rep_cand():
 @app.route("/transactions")
 @login_required
 def transactions():
-    show_dates = Votes.query.all()
+    show_dates = Votes.query.all() 
     x = delegate_cand()
     y = school_rep_cand()
+    
     return render_template("transactions.html",title='Votes Ledger', date=show_dates, x=x, y=y)
