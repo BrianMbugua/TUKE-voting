@@ -11,7 +11,7 @@ from flask import flash
 def run_face_rec():
 
     # Get a reference to webcam #0 (the default one)
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture(1)
 
     # Load a sample picture and learn how to recognize it.
     brian_image = face_recognition.load_image_file("tukevoting/images/brian-mbugua/1.jpg")
@@ -25,27 +25,27 @@ def run_face_rec():
     yusuf_face_encoding = face_recognition.face_encodings(yusuf_image)[0]
 
      
-    nadia_image = face_recognition.load_image_file("tukevoting/images/voter2/1.jpg")
-    nadia_face_encoding = face_recognition.face_encodings(nadia_image)[0]
+    amal_image = face_recognition.load_image_file("tukevoting/images/amal_faruk/1.jpg")
+    amal_face_encoding = face_recognition.face_encodings(amal_image)[0]
 
     # Create arrays of known face encodings and their names
     known_face_encodings = [
         brian_face_encoding,
         emilia_face_encoding,
         yusuf_face_encoding,
-        nadia_face_encoding
+        amal_face_encoding
     ]
     known_face_names = [
         "Brian Mbugua",
         "Emilia Clarke",
         "Yusuf Kamau",
-        "Nadia Fatima"
+        "Amal Faruk"
     ]
     known_roll_num = [
         565565,
         165164,
         654648,
-        164864
+        566292
     ]
 
     # Initialize some variables
@@ -93,9 +93,6 @@ def run_face_rec():
                     rollnum = known_roll_num[best_match_index]
 
 
-                    #video_capture.release()
-                    #cv2.destroyAllWindows()
-
                 face_names.append(name)
                 face_nums.append(rollnum)
             
@@ -120,14 +117,14 @@ def run_face_rec():
             cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-            cv2.putText(frame, "PRESS Q WHEN DONE", (50, 50), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, "PRESS Y WHEN DONE TO EXIT", (50, 50), font, 1.0, (255, 255, 255), 1)
 
 
         # Display the resulting image 
         cv2.imshow('Video', frame)
 
         # Hit 'q' on the keyboard to quit!
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord('y'):
             break
 
         
