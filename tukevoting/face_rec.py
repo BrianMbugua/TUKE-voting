@@ -9,9 +9,17 @@ from tukevoting.models import Voter, VoterFaces
 from flask import flash
 
 def run_face_rec():
-
+    
     # Get a reference to webcam #0 (the default one)
+    
     video_capture = cv2.VideoCapture(1)
+
+    #Resize Video
+    def change_res(width, height):
+        video_capture.set(3, width)
+        video_capture.set(4, height)
+
+    change_res(640, 480)
 
     # Load a sample picture and learn how to recognize it.
     brian_image = face_recognition.load_image_file("tukevoting/images/brian-mbugua/1.jpg")
@@ -54,16 +62,25 @@ def run_face_rec():
     face_names = []
     face_nums = []
     process_this_frame = True
+    scale = 0.5
+    
 
     while True:
+        
         # Grab a single frame of video
         ret, frame = video_capture.read()
+
+        #Scale factor
+        new_width = int(frame.shape[1]*scale)
+        new_height = int(frame.shape[0]*scale)
+
 
         # Only process every other frame of video to save time
         if process_this_frame:
             # Resize frame of video to 1/4 size for faster face recognition processing
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-            
+
+            print(small_frame.shape)
             # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
             rgb_small_frame = small_frame[:, :, ::-1]
 
@@ -90,11 +107,11 @@ def run_face_rec():
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
-                    rollnum = known_roll_num[best_match_index]
+                    #rollnum = known_roll_num[best_match_index]
 
 
                 face_names.append(name)
-                face_nums.append(rollnum)
+                #face_nums.append(rollnum)
             
                 
 
@@ -111,20 +128,20 @@ def run_face_rec():
             left *= 4
 
             # Draw a box around the face
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+            cv2.rectangle(frame, (left, top), (right, bottom), (91, 121, 114), 2)
 
             # Draw a label with a name below the face
-            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (91, 121, 114), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-            cv2.putText(frame, "PRESS Y WHEN DONE TO EXIT", (50, 50), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, "PRESS Y", (50, 50), font, 1.0, (91, 121, 114), 1)
 
 
-        # Display the resulting image 
-        cv2.imshow('Video', frame)
+        # Display the resulting image
+        cv2.imshow('Video', cv2.resize(frame, (640, 480)))
 
         # Hit 'q' on the keyboard to quit!
-        if cv2.waitKey(1) & 0xFF == ord('y'):
+        if cv2.waitKey(20) & 0xFF == ord('y'):
             break
 
         
@@ -132,14 +149,7 @@ def run_face_rec():
     video_capture.release()
     cv2.destroyAllWindows()
 
-    if matches[best_match_index]:
-        if current_user.roll_num == known_roll_num[best_match_index]:
-            allow_to_vote = VoterFaces(roll_num=current_user.roll_num, allow_vote=True)
-            db.session.add(allow_to_vote)
-            db.session.commit()
-        else:
-            flash("Not your face", 'danger')
-
+    
     
     
     
